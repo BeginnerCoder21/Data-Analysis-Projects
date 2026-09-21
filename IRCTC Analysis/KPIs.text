@@ -1,0 +1,281 @@
+============================================================
+              IRCTC POWER BI – DAX REFERENCE
+============================================================
+
+This file contains the Date Table, Calculated Columns,
+and Measures used in the IRCTC Power BI Dashboard.
+
+------------------------------------------------------------
+1. DATE TABLE & DATE COLUMNS
+------------------------------------------------------------
+
+### Date Table
+
+Creates a continuous date table based on the minimum and
+maximum booking dates in the IRCTC dataset.
+
+Date Table =
+CALENDAR(
+    MIN(irctc_data[Booking_Date]),
+    MAX(irctc_data[Booking_Date])
+)
+
+
+### Year
+
+Year =
+YEAR('Date Table'[Date])
+
+
+### Day Name
+
+Returns the abbreviated day name (Mon, Tue, Wed, etc.).
+
+Day Name =
+FORMAT('Date Table'[Date], "ddd")
+
+
+### Day Number
+
+Returns the weekday number, where Monday = 1 and Sunday = 7.
+
+Day Number =
+WEEKDAY('Date Table'[Date], 2)
+
+
+### Month Name
+
+Returns the abbreviated month name (Jan, Feb, Mar, etc.).
+
+Month Name =
+FORMAT('Date Table'[Date], "MMM")
+
+
+### Month Number
+
+Returns the month number from 1 to 12.
+
+Month Number =
+MONTH('Date Table'[Date])
+
+
+------------------------------------------------------------
+2. BASE / CORE MEASURES
+------------------------------------------------------------
+
+These measures calculate the main KPIs used in the dashboard.
+
+
+### Total Bookings
+
+Counts the total number of booking records.
+
+Total Bookings =
+COUNTROWS(irctc_data)
+
+
+### Total Revenue
+
+Calculates the total revenue generated.
+
+Total Revenue =
+SUM(irctc_data[Total_Revenue_INR])
+
+
+### Total Users
+
+Counts the number of unique users.
+
+Total Users =
+DISTINCTCOUNT(irctc_data[User_ID])
+
+
+### Trains Operated
+
+Counts the number of unique trains operated.
+
+Trains Operated =
+DISTINCTCOUNT(irctc_data[Train_Number])
+
+
+### Average Occupancy
+
+Calculates the average train occupancy percentage.
+
+Avg Occupancy =
+AVERAGE(irctc_data[Occupancy_Percentage])
+
+
+------------------------------------------------------------
+3. PREVIOUS MONTH (PM) MEASURES
+------------------------------------------------------------
+
+These measures return the KPI value from the previous month.
+
+They are mainly used for Month-over-Month (MoM) comparisons.
+
+
+### Previous Month – Bookings
+
+PM Booking =
+CALCULATE(
+    [Total Bookings],
+    DATEADD('Date Table'[Date], -1, MONTH)
+)
+
+
+### Previous Month – Revenue
+
+PM Revenue =
+CALCULATE(
+    [Total Revenue],
+    DATEADD('Date Table'[Date], -1, MONTH)
+)
+
+
+### Previous Month – Train Occupancy
+
+PM trains_oc =
+CALCULATE(
+    [Avg Occupancy],
+    DATEADD('Date Table'[Date], -1, MONTH)
+)
+
+
+### Previous Month – Trains Operated
+
+PM trains_op =
+CALCULATE(
+    [Trains Operated],
+    DATEADD('Date Table'[Date], -1, MONTH)
+)
+
+
+### Previous Month – Users
+
+PM Users =
+CALCULATE(
+    [Total Users],
+    DATEADD('Date Table'[Date], -1, MONTH)
+)
+
+
+------------------------------------------------------------
+4. MONTH-OVER-MONTH (MoM) MEASURES
+------------------------------------------------------------
+
+These measures calculate the percentage change between
+the current month and the previous month.
+
+Formula concept:
+
+MoM % =
+(Current Month - Previous Month) / Previous Month
+
+
+### MoM Booking %
+
+MoM Booking % =
+DIVIDE(
+    [Total Bookings] - [PM Booking],
+    [PM Booking],
+    0
+)
+
+
+### MoM Revenue %
+
+MoM Revenue % =
+DIVIDE(
+    [Total Revenue] - [PM Revenue],
+    [PM Revenue],
+    0
+)
+
+
+### MoM Train Occupancy %
+
+MoM Train_Oc % =
+DIVIDE(
+    [Avg Occupancy] - [PM trains_oc],
+    [PM trains_oc],
+    0
+)
+
+
+### MoM Train Operations %
+
+MoM Train_Op % =
+DIVIDE(
+    [Trains Operated] - [PM trains_op],
+    [PM trains_op],
+    0
+)
+
+
+### MoM Users %
+
+MoM Users % =
+DIVIDE(
+    [Total Users] - [PM Users],
+    [PM Users],
+    0
+)
+
+
+------------------------------------------------------------
+5. QUICK REFERENCE – MEASURE DEPENDENCIES
+------------------------------------------------------------
+
+BASE MEASURES
+│
+├── Total Bookings
+├── Total Revenue
+├── Total Users
+├── Trains Operated
+└── Avg Occupancy
+
+
+PREVIOUS MONTH MEASURES
+│
+├── PM Booking      → Total Bookings
+├── PM Revenue      → Total Revenue
+├── PM trains_oc    → Avg Occupancy
+├── PM trains_op    → Trains Operated
+└── PM Users        → Total Users
+
+
+MoM MEASURES
+│
+├── MoM Booking %   → Total Bookings + PM Booking
+├── MoM Revenue %   → Total Revenue + PM Revenue
+├── MoM Train_Oc %  → Avg Occupancy + PM trains_oc
+├── MoM Train_Op %  → Trains Operated + PM trains_op
+└── MoM Users %     → Total Users + PM Users
+
+
+------------------------------------------------------------
+6. IMPORTANT NOTES
+------------------------------------------------------------
+
+• The Date Table should be marked as a Date Table in Power BI.
+
+• The Date Table should be related to the appropriate date
+  column in the irctc_data table.
+
+• The Month Number can be used to sort Month Name correctly.
+
+• Day Number can be used to sort Day Name correctly.
+
+• MoM measures use DATEADD to compare the current period
+  with the previous month.
+
+• DIVIDE(..., 0) returns 0 when the previous month's value
+  is zero, helping avoid divide-by-zero errors.
+
+• For percentage measures, format the MoM measures as
+  Percentage (%) in Power BI.
+
+============================================================
+                    END OF DAX REFERENCE
+============================================================

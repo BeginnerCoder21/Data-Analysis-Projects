@@ -1,3 +1,5 @@
+(Matlab kroge hi copy tumlog, sudhar jao 😒😒)
+
 Bank Credit = 
 VAR lastDates = [Latest Date]
 RETURN

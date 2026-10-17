@@ -1,0 +1,84 @@
+Bank Credit = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Bank Credit",'Calendar'[Date]=lastDates)
+
+Bank Credit PY = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Bank Credit",'Calendar'[Date]=EDATE(lastDates,-12))
+
+Bank Credit YOY% = DIVIDE([Bank Credit]-[Bank Credit PY],[Bank Credit PY]) 
+
+Bank Deposit = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Deposits Mobilisation",'Calendar'[Date]=lastDates)
+
+Bank Deposit PY = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Deposits Mobilisation",'Calendar'[Date]=EDATE(lastDates,-12))
+
+Bank Deposit YOY% = DIVIDE([Bank Deposit]-[Bank Deposit PY],[Bank Deposit PY]) 
+
+Currency Circulation PY = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Currency in Circulation",'Calendar'[Date]=EDATE(lastDates,-12))
+
+Currency Circulation YOY% = DIVIDE([Curreny Circulation]-[Currency Circulation PY],[Currency Circulation PY])
+
+Curreny Circulation = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Currency in Circulation",'Calendar'[Date]=lastDates)
+
+Forex Reserves = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Forex Reserves",'Calendar'[Date]=lastDates)
+
+Forex Reserves MOM% = DIVIDE([Forex Reserves]-[Forex Reserves PM],[Forex Reserves PM]) 
+
+Forex Reserves PM = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Forex Reserves",'Calendar'[Date]=EOMONTH(lastDates,-1))
+
+Inflation CPI = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Inflation CPI",'Calendar'[Date]=lastDates)
+
+Inflation CPI PM = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Inflation CPI",'Calendar'[Date]=EOMONTH(lastDates,-1))
+
+Inflation MOM Change = [Inflation CPI] - [Inflation CPI PM]
+
+Latest Date = MAX('Calendar'[Date])
+
+Repo Rate = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Repo Rate",'Calendar'[Date]=lastDates)
+
+Repo Rate Change = [Repo Rate]-[Repo Rate PM]
+
+Repo Rate PM = 
+VAR lastDates = [Latest Date]
+RETURN
+    CALCULATE([Total Amount],'FactEconomic'[Indicator_Category]="Repo Rate",'Calendar'[Date]=EOMONTH(lastDates,-1))
+
+Total Amount = SUM('FactEconomic'[Amount_Value])
+
+UPI Growth Color = IF([UPI Growth YoY %]>=0,"#00C853","#e53935")
+
+UPI Growth YoY % = DIVIDE([UPI Volume]-[UPI PY],[UPI PY])
+
+UPI PY = CALCULATE([UPI Volume],SAMEPERIODLASTYEAR('Calendar'[Date]))
+
+UPI Volume = CALCULATE([Total Amount],FactEconomic[Indicator_Category]="UPI Transactions")
+
